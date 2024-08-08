@@ -19,7 +19,7 @@ function isMult(a, b) {
 if (Boolean(+Value)) {
 
 // while
-let a = 1;
+let a = 0;
  while (a <= +Value) {
     
     switch (true) {
