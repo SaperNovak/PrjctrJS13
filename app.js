@@ -93,7 +93,7 @@ let me = {
 
 // Аби вони були захищені від перезапису об'єкту і їх можна було викликати в таймері:
 let securedSelfIntroduce = me.introduce.bind(me); 
-let securedSelfeDescribe = me.describeMySkils(me);
+let securedSelfeDescribe = me.describeMySkils.bind(me);
 
 setTimeout(securedSelfIntroduce, 1000); // виведе коректний результат
 setTimeout(securedSelfeDescribe, 1000); // виведе коректний результат
