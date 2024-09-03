@@ -1,89 +1,103 @@
 "use strict";
+// 1. Напишіть функцію addThemAll
+// Вона буде знаходити суму усіх своїх аргументів незалежно від їх кількості (але без використання вбудованого об'єкту Math).
+// Використайте оператор розширення
 
-/*
-Напишіть код який виводить в консоль значення від 1 до 100, 
-але замість чисел кратних 3 має виводитись `Лол`, замість значень кратних 5 - `Кек`, 
-а замість значень кратних і 3, і 5 - `ЛолКек
-*/
-//const RandVal = Math.trunc(Math.random() * 100);
-//console.log(RandVal); 
+console.log(addThemAll(2,4)); // 6
+console.log(addThemAll(1,2,3,4)); // 10
+console.log(addThemAll(5,5,10)); // 20
+
+function addThemAll(...operands) {
+   
+        let sum = 0;
+        for (let operand of operands) sum += operand; 
+        return sum;
+}
+
+// 2. Задача на використання замикання. 
+// Напишіть функцію яка працює таким чином: multiply(a)(b)  // a * b
+
+console.log(multiply(5)(5))		// 25
+console.log(multiply(2)(-2))	        // -4
+console.log(multiply(4)(3))		// 12
+
+function multiply(a) {
+   return function (b) {
+          return a * b;
+         };
+}
+// 3. Напишіть функцію яка буде використовуватись для сортування масиву фільмів 
+// Функція буде приймати два аргумента:
+// — властивість за якою треба посортувати. 
+// — опцію напрямку сортування (зростання чи спадання)
+const movies = [
+	{
+		movieName: 'The Thing',
+		releaseYear: 1982,
+		directedBy: 'Carpenter',
+		runningTimeInMinutes: 109,
+	},
+	{
+		movieName: 'Aliens',
+		releaseYear: 1986,
+		directedBy: 'Cameron',
+		runningTimeInMinutes: 137,
+	},
+	{
+		movieName: 'Men in Black',
+		releaseYear: 1997,
+		directedBy: 'Sonnenfeld',
+		runningTimeInMinutes: 98,
+	},
+	{
+		movieName: 'Predator',
+		releaseYear: 1987,
+		directedBy: 'McTiernan',
+		runningTimeInMinutes: 107,
+	},
+];
+
+//console.log(movies.sort(byProperty('releaseYear', '>'))); 
+// виведе масив фільмів посортованих по року випуску, від старішого до новішого
+//console.log(movies.sort(byProperty('runningTimeInMinutes', '<'))); 
+// виведе масив фільмів посортованих по їх тривалості, від найдовшого до найкоротшого
+//console.log(movies.sort(byProperty('movieName', '>'))); 
+// виведе масив фільмів посортованих по назві, в алфавітному порядку
+
+function byProperty(property, direction) {
+       // const propA = a[property]toUpperCase(); 
+   // const propB = b[property]toUpperCase(); 
+          switch (direction) {
+            case '<': //   за зростанням
+                 return (a,b) => a[property] < b[property]  ? -1 : 1  ;
+            break;
+            case '>': //  за спаданням
+                return (a,b) => a[property] > b[property]  ? -1 : 1    ;          
+             break;
+                 
+               };    
+
+          
+           };
+// sort змфнює сам масив, щоб лишити масив незмінним можна зробити так
+const sorted1 = [...movies].sort(byProperty('releaseYear', '>')); // sorted1 = поверхнева копія масиву movies
+console.log(sorted1);
+const sorted2 = [...movies].sort(byProperty('runningTimeInMinutes', '<'));
+console.log(sorted2);
+const sorted3 = [...movies].sort(byProperty('movieName', '>'));
+console.log(sorted3);
+
+// 4. Напишіть функцію яка відфільтрує масив унікальних значень
+//Рішення має працювати незалежно від конкретних значень в масиві імен      
+
+const userNames = ['Петро', 'Емма', 'Петро', 'Емма', 'Марта', 'Яна', 'Василь', 'Антон', 'Олена', 'Емма'];
+
+function filterUnique(array) {
+// тут ваш код 
+return Array.from(new Set(userNames))
+}
+
+console.log(filterUnique(userNames)); // ['Петро', 'Емма', 'Марта', 'Яна', 'Василь', 'Антон', 'Олена'];
 
 
-const Value = prompt("Enter number from 1 to 100");
-
-function isMult(a, b) {
-    return a % b === 0;
-  }
-
-
-if (Boolean(+Value)) {
-
-// while
-let a = 0;
- while (a <= +Value) {
-    
-    switch (true) {
-     //   case !!!(a % 15):
-          case isMult(a, 15):
-            console.log("ЛолКек");
-        break;
-      //  case !!!(a % 3):
-      case isMult(a, 3):
-            console.log("Лол");
-        break;
-      //  case !!!(a % 5):
-      case isMult(a, 5):
-            console.log("Кек");
-        break;
-        default:
-            console.log(a); 
-    };
-   a++;
- }
-
-}  // (Boolean(+Value)) 
-else { //(Boolean(+Value)) 
-       console.log("Щось пішло не так");
-     } // else (Boolean(+Value)) 
-
-
-
-
-/*
-Напишіть код який бере значення зі змінної (`value`) і виводить у консоль всі парні числа, що менші за задане.
-Наприклад, якщо у змінній число 10, програма має вивести наступне: 2, 4, 6, 8. 
-Додаткові вимоги:
-1. Реалізуйте рішення 2 способами: з використанням циклу `for` та `while`
-2. Код має перевіряти, чи значення у змінній є числом. Якщо воно не є числом,  
-в консоль має вивестись повідомлення про помилку, наприклад `'Таке чуство шо Бог десь наказує нас за шось'`.
-*/
-console.log("--------------- 2 ------------------");
-//const Value = prompt("Enter number");
-const isEven = n => !!!(n % 2); // Перевірка парності
-
-
-if (Boolean(+Value)) {
-// For
-     for (let i = 1; i <= +Value; i++) {
-          if (isEven(i) )  {
-              console.log(i);
-          }
-         // else {
-         // continue;  
-         // }
-     } //for
-// while
-let k = 1;
- while (k <= +Value) {
-    
-    if (isEven(k) )  {
-        console.log(k);
-    }
-   k++;
- }
-
-}  // (Boolean(+Value)) 
-else { //(Boolean(+Value)) 
-       console.log("Яка прикра несподіванка спіткала наших на самому старті :(");
-     } // else (Boolean(+Value)) 
 
