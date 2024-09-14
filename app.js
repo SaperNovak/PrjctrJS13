@@ -4,6 +4,7 @@ const button = document.querySelector('.btn'); // Кнопка
 const strDate = document.getElementById('clickDate'); // Рядок з датою останнього кліку 
 let lastSwitch = true;
 let lastSwitchText = 'On';
+let currSwitchText = 'Off';
 let lastSDate =  new Date();
 let formattedSDate = formatDate(lastSDate);
 
@@ -21,26 +22,38 @@ button.addEventListener('click', clickHandler); // Змінюємо тексти
 
 function renderButton() {
     getFromLS(lastSDate, lastSwitch);
+   
+    switchText(lastSDate, lastSwitch);
     changeColor(lastSwitch);
-}
+};
+
+function switchText(lastSDate, lastSwitch) {
+    if (lastSwitch) {
+        lastSwitchText = 'On';
+        currSwitchText = 'Off';
+    } else {
+        lastSwitchText = 'Off';
+        currSwitchText = 'On';
+    };
+    strDate.innerHTML = 'Last ' + 'Turn ' + lastSwitchText + ' ' + formatDate(lastSDate);
+    button.innerHTML = 'Turn ' + currSwitchText ;
+};
 
 function clickHandler() {
+    // При натисканні кнопки потрібно:
+    //- оновити дату +
+    //- перемикнути switch, оновити тексти
+    //- змінити фон
     lastSDate = new Date();
-    formattedSDate = formatDate(lastSDate);
-    strDate.innerHTML = 'Last ' + 'Turn ' + lastSwitchText + ' ' + formattedSDate;
     
-    changeColor(lastSwitch);
-    console.log (lastSDate, formattedSDate);
     lastSwitch = !lastSwitch 
-    if (lastSwitch) {
-        lastSwitchText = 'On'
-    } else {
-        lastSwitchText = 'Off'
-    };
-    button.innerHTML = 'Turn ' + lastSwitchText ;
+    changeColor(lastSwitch);
+    switchText(lastSDate, lastSwitch)
+
     settToLS(lastSDate, lastSwitch);
   };
 
+  
 // Зберігає результат у LocalStorage
 function settToLS(lastSDate, lastSwitch) {
     localStorage.setItem(SDATE_KEY, lastSDate);
@@ -54,13 +67,11 @@ function getFromLS(lastSDate, lastSwitch) {
 }
 
   
-  
-  
   function changeColor(lastSwitch){
     
       if( lastSwitch) {
-        document.body.style.background = colorDark;
-      } else document.body.style.background = colorLight;
+        document.body.style.background = colorLight;
+      } else document.body.style.background = colorDark;
   };  
 
   function formatDate(date) {
