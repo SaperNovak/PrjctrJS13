@@ -5,8 +5,9 @@ const strDate = document.getElementById('clickDate'); // Рядок з дато�
 let lastSwitch = true;
 let lastSwitchText = 'On';
 let currSwitchText = 'Off';
-let lastSDate =  new Date();
-let formattedSDate = formatDate(lastSDate);
+let lastSDate =  new Date(0);
+const initialDate = new Date(0);
+
 
 const SWITCH_KEY = 'switch'; // Ключ для збереження статусу кнопки в LocalStorage
 const SDATE_KEY = 'sdate'; // Ключ для збереження дати в LocalStorage
@@ -21,29 +22,18 @@ button.addEventListener('click', clickHandler); // Змінюємо тексти
 
 
 function renderButton() {
-    getFromLS(lastSDate, lastSwitch);
-   
+   // getFromLS(lastSDate, lastSwitch);
+   lastSDate = new Date(localStorage.getItem(SDATE_KEY)) ; 
+   lastSwitch = localStorage.getItem(SWITCH_KEY);
+    console.log ('render',lastSDate, lastSwitch);
+    console.log (typeof(lastSDate))
     switchText(lastSDate, lastSwitch);
-    changeColor(lastSwitch);
+   
 };
 
-function switchText(lastSDate, lastSwitch) {
-    if (lastSwitch) {
-        lastSwitchText = 'On';
-        currSwitchText = 'Off';
-    } else {
-        lastSwitchText = 'Off';
-        currSwitchText = 'On';
-    };
-    strDate.innerHTML = 'Last ' + 'Turn ' + lastSwitchText + ' ' + formatDate(lastSDate);
-    button.innerHTML = 'Turn ' + currSwitchText ;
-};
 
 function clickHandler() {
-    // При натисканні кнопки потрібно:
-    //- оновити дату +
-    //- перемикнути switch, оновити тексти
-    //- змінити фон
+
     lastSDate = new Date();
     
     lastSwitch = !lastSwitch 
@@ -53,7 +43,24 @@ function clickHandler() {
     settToLS(lastSDate, lastSwitch);
   };
 
-  
+  function switchText(Date, lastSwitch) {
+    console.log ('switch', Date, initialDate);
+    if ( Date.getTime() 
+         === initialDate.getTime()) {
+    strDate.innerHTML = '';
+    button.innerHTML = 'Turn ' + currSwitchText ;
+    } else {
+        if (lastSwitch) {
+        lastSwitchText = 'On';
+        currSwitchText = 'Off';
+    } else {
+        lastSwitchText = 'Off';
+        currSwitchText = 'On';
+    };
+    strDate.innerHTML = 'Last ' + 'Turn ' + lastSwitchText + ' ' + formatDate(Date);
+    button.innerHTML = 'Turn ' + currSwitchText ;
+}
+};  
 // Зберігає результат у LocalStorage
 function settToLS(lastSDate, lastSwitch) {
     localStorage.setItem(SDATE_KEY, lastSDate);
@@ -62,8 +69,11 @@ function settToLS(lastSDate, lastSwitch) {
 
 // Виводить результат із LocalStorage під час завантаження сторінки
 function getFromLS(lastSDate, lastSwitch) {
-    lastSDate = localStorage.getItem(SDATE_KEY, lastSDate) ?? ''; // Встановлюємо 0, якщо результату немає
-    localStorage.getItem(SWITCH_KEY, lastSwitch);
+    lastSDate = localStorage.getItem(SDATE_KEY) ; 
+    lastSwitch = localStorage.getItem(SWITCH_KEY);
+    console.log ( 'getLS', lastSDate, lastSwitch);
+  return (lastSDate, lastSwitch);
+  
 }
 
   
