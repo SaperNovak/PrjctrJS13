@@ -24,11 +24,11 @@ button.addEventListener('click', clickHandler); // Змінюємо тексти
 function renderButton() {
    // getFromLS(lastSDate, lastSwitch);
    lastSDate = new Date(localStorage.getItem(SDATE_KEY)) ; 
-   lastSwitch = localStorage.getItem(SWITCH_KEY);
-    console.log ('render',lastSDate, lastSwitch);
-    console.log (typeof(lastSDate))
+   lastSwitch = JSON.parse(localStorage.getItem(SWITCH_KEY));
+   // console.log ('render',lastSDate, lastSwitch);
+   // console.log (typeof(lastSwitch))
     switchText(lastSDate, lastSwitch);
-   
+    changeColor(lastSwitch);
 };
 
 
