@@ -66,11 +66,17 @@ body {
 
 /* Buttons and Inputs */
 input[type="date"], button, .radio-button {
-    width: 100%; /* Full width on mobile devices */
+    width: 100%; /* */
     margin-bottom: 10px;
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 10px;
+   
+}
+
+.input {
+
+    width: 100%; 
 }
 
 .radio-button {
@@ -93,6 +99,9 @@ input[type="date"], button, .radio-button {
 .radio-button:hover {
     background-color: #707070; /* Darker silver on hover */
 }
+
+
+
 
 .preset-buttons, .radio-options, .buttons {
     display: flex;

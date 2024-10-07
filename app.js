@@ -36,10 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-plus-week').addEventListener('click', addWeek);
     document.getElementById('btn-plus-month').addEventListener('click', addMonth);
     
-    document.getElementById('btn-days').addEventListener('click', () => calculateInterval('days'));
-    document.getElementById('btn-hours').addEventListener('click', () => calculateInterval('hours'));
-    document.getElementById('btn-minutes').addEventListener('click', () => calculateInterval('minutes'));
-    document.getElementById('btn-seconds').addEventListener('click', () => calculateInterval('seconds'));
+    document.getElementById('btn-days').addEventListener('click', () => calculateInterval('днів'));
+    document.getElementById('btn-hours').addEventListener('click', () => calculateInterval('годин'));
+    document.getElementById('btn-minutes').addEventListener('click', () => calculateInterval('хвилин'));
+    document.getElementById('btn-seconds').addEventListener('click', () => calculateInterval('секунд'));
     
     document.getElementById('btn-clear-history').addEventListener('click', clearHistory);
 
@@ -104,24 +104,24 @@ function calculateInterval(unit) {
     let totalDays = (date2 - date1) / (1000 * 60 * 60 * 24);
     let validDays = totalDays;
 
-    if (intervalType === 'workDays') {
+    if (intervalType === 'будні дні') {
         validDays = calculateWorkDays(date1, date2);
-    } else if (intervalType === 'weekends') {
+    } else if (intervalType === 'вихідні дні') {
         validDays = calculateWeekends(date1, date2);
     }
 
     let result;
     switch (unit) {
-        case 'days':
+        case 'днів':
             result = validDays;
             break;
-        case 'hours':
+        case 'годин':
             result = validDays * 24;
             break;
-        case 'minutes':
+        case 'хвилин':
             result = validDays * 24 * 60;
             break;
-        case 'seconds':
+        case 'секунд':
             result = validDays * 24 * 60 * 60;
             break;
         default:
@@ -131,7 +131,7 @@ function calculateInterval(unit) {
     const formattedResult = `${result.toFixed(2)} ${unit}`;
     document.getElementById('result').innerText = `Interval: ${formattedResult}`;
 
-    saveToHistory(formattedResult, unit, date1, date2, intervalType);
+    saveToHistory(formattedResult, date1, date2, intervalType);
     displayHistory();
 }
 
@@ -156,10 +156,11 @@ function calculateWeekends(start, end) {
 }
 
 // Збереження історії в LS
-function saveToHistory(result, unit, startDate, endDate, intervalType) {
+//function saveToHistory(result, unit, startDate, endDate, intervalType) {
+    function saveToHistory(result, startDate, endDate, intervalType) {
     let history = JSON.parse(localStorage.getItem('calcHistory')) || [];
-    history.push(`From: ${startDate.toLocaleDateString()} To: ${endDate.toLocaleDateString()} | ${result} (${unit}, ${intervalType})`);
-
+ //   history.push(`З: ${startDate.toLocaleDateString()} По: ${endDate.toLocaleDateString()} | ${result} (${unit}, ${intervalType})`);
+    history.push(`З: ${startDate.toLocaleDateString()} По: ${endDate.toLocaleDateString()} | ${result} (${intervalType})`);
     if (history.length > 10) {
         history.shift();
     }
