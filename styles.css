@@ -1,0 +1,187 @@
+/* Base styles for mobile-first design */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #d0d0d0; /* Dark silver background */
+    margin: 0;
+    padding: 20px;
+}
+
+.wrapper, .container {
+    max-width: 100%; /* Full width on mobile devices */
+    margin: auto;
+    background: #ffffff; /* White background */
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Tab Navigation */
+.tab-nav {
+    display: flex;
+    flex-wrap: wrap; /* Stack on smaller screens */
+    justify-content: center; /* Center the tabs */
+    margin-bottom: 20px;
+}
+
+.tab-nav > input[type="radio"] {
+    display: none; /* Hide radio buttons */
+}
+
+.tab-nav > label {
+    padding: 10px 20px;
+    background-color: #7a7a7a; /* Dark silver background */
+    color: #fff;
+    border-radius: 10px; /* Rounder corners */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    flex-grow: 1; /* Tabs take full width on smaller screens */
+    text-align: center;
+    margin: 5px; /* Add margin for spacing */    
+}
+
+.tab-nav > input[type="radio"]:checked + label {
+    background-color: #a67c39; /* white when active */
+    color: #fff;
+    cursor: default;
+}
+
+.tab-nav > label:hover {
+    background-color: #707070; /* Darker silver on hover */
+}
+
+/* Display only the active tab content */
+.tab-content {
+    display: none; /* Hide all tab content by default */
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Show the content when corresponding radio is checked */
+#tab-btn-1:checked ~ .tab-content#content-1,
+#tab-btn-2:checked ~ .tab-content#content-2 {
+    display: block; /* Display only the active tab content */
+}
+
+/* Buttons and Inputs */
+input[type="date"], button, .radio-button {
+    width: 100%; /* Full width on mobile devices */
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+}
+
+.radio-button {
+    flex: 1;
+    padding: 10px;
+    margin: 0 5px;
+    background-color: #8a8a8a; /* Dark silver background for radio buttons */
+    color: #fff;
+    border: none;
+    border-radius: 10px; /* Rounder corners */
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.radio-button.active {
+    background-color: #707070; /* Darker silver for active button */
+}
+
+.radio-button:hover {
+    background-color: #707070; /* Darker silver on hover */
+}
+
+.preset-buttons, .radio-options, .buttons {
+    display: flex;
+    flex-direction: column; /* Stack buttons vertically on smaller screens */
+}
+
+.preset-buttons button, .radio-button, button {
+    margin-bottom: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #a67c39;
+}
+
+h2 {
+    text-align: center;
+    margin-top: 20px;
+    color: #a67c39; /* Dark gold color for results */
+}
+
+h3 {
+    text-align: center;
+    color: #555; /* Dark gray for subheading */
+}
+
+/* Clear History Button */
+.clear-history {
+    text-align: center;
+    margin-top: 15px;
+}
+
+/* History list */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    margin: 5px 0;
+    color: #333;
+}
+
+.bar-line {
+    display: flex;
+    flex-direction: column; /* Stack items vertically by default */
+}
+
+/* For larger screens, use more space for side-by-side layouts */
+@media (min-width: 768px) {
+    .wrapper, .container {
+        max-width: 600px; /* Slightly larger container on larger screens */
+    }
+
+    .tab-nav {
+        justify-content: flex-start;
+    }
+
+    .tab-nav > label {
+        flex-grow: 0; /* Go back to normal tab size on larger screens */
+    }
+
+    .bar-line {
+        flex-direction: row; /* Side by side layout */
+    }
+
+    .bar-line__left {
+        width: 70%;
+        margin-right: 20px;
+    }
+
+    .bar-line__right {
+        width: 30%;
+    }
+
+    .preset-buttons, .radio-options, .buttons {
+        flex-direction: row; /* Horizontally align buttons on larger screens */
+        justify-content: space-between;
+    }
+
+    .preset-buttons button, .radio-button, button {
+        width: 48%; /* Fit two buttons side by side */
+        margin-bottom: 0;
+    }
+}
+
+/* Larger desktop layouts */
+@media (min-width: 1024px) {
+    .wrapper, .container {
+        max-width: 800px; /* Larger container for desktop */
+    }
+}
