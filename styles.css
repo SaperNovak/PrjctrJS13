@@ -150,6 +150,42 @@ li {
     flex-direction: column; /* Stack items vertically by default */
 }
 
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.input-group select, .input-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+#results {
+    margin-top: 20px;
+}
+
+#holidays-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+#holidays-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+#holidays-list li:last-child {
+    border-bottom: none;
+}
+
 /* For larger screens, use more space for side-by-side layouts */
 @media (min-width: 768px) {
     .wrapper, .container {
