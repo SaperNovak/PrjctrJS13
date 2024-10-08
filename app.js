@@ -58,6 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
 function updateEndDateMin() {
     const startDate = document.getElementById('date1').value;
     document.getElementById('date2').min = startDate;
+    if (date1.value) {
+       date2.disabled = false;
+    } else {
+       date2.disabled = true;
+    }
 }
 
 // Додатково перевіряємо усови дат
@@ -68,6 +73,7 @@ function validateDates() {
     if (endDate < startDate) {
         document.getElementById('result').innerText = 'Дата завершення не може бути раніше за дату початку.';
     }
+   
 }
 
 // Пресет тиждень
