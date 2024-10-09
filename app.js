@@ -45,10 +45,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // перша таба, калькулятор дат
-let startDate = new Date(document.getElementById('date1').value);  // 
-let endDate   = new Date(document.getElementById('date2').value);
+const resultV = document.getElementById('result');
 
+const date1V = document.getElementById('date1'); 
+const date2V = document.getElementById('date2');
 
+let startDate = new Date(date1V.value);  // 
+let endDate   = new Date(date2V.value);
+
+//let startDate = convertToUTC(date1V.value);
+//let endDate   = convertToUTC(date2V.value);
+                
 
 // друга таба, свята з календаріфік
 const apiToken = 'bRhSp75zNJYqrYlhWThMvINrqnpXHi9q';
@@ -64,8 +71,8 @@ let holidays = []; // Store fetched holidays
 
 // Додаємо решту слухачів подій по табам
    // таба 1
-    document.getElementById('date1').addEventListener('change', updateEndDateMin);
-    document.getElementById('date2').addEventListener('change', validateDates);
+    date1V.addEventListener('change', updateEndDateMin);
+    date2V.addEventListener('change', validateDates);
 
     document.getElementById('btn-plus-week').addEventListener('click', addWeek);
     document.getElementById('btn-plus-month').addEventListener('click', addMonth);
@@ -153,8 +160,19 @@ function setupTabListeners() { // асайнимо слухач події до 
 //// Керування ТАБАМИ <<<<
 
 ///// >>>>>Tаба 1 >>>>>
+
+function convertToUTC(dateStr) { // конвертуємо дати в формат без урахування часової зони
+    const dateObj = new Date(dateStr);
+    console.log('convert',dateStr, (new Date(Date.UTC(dateObj.getFullYear(),dateObj.getMonth(),dateObj.getDate())))); 
+    return new Date(Date.UTC(
+        dateObj.getFullYear(),
+        dateObj.getMonth(),
+        dateObj.getDate()
+    ));
+}
+
 function updateEndDateMin() { // Сетимо вибір другої дати не раніе від першої, дізейблимо дургу дату поки не задано першу
-     startDate = new Date(document.getElementById('date1').value);  //  
+     startDate = new Date(date1V.value);  //  
     if (date1.value) {
        date2.disabled = false;
        date2.min = date1.value;
@@ -162,56 +180,66 @@ function updateEndDateMin() { // Сетимо вибір другої дати �
        date2.disabled = true;
     }
     validateDates()
-   // console.log (date1, date2, date1.value, startDate);
+   
 }
 
 function validateDates() { // Додатково перевіряємо умови дат
-    endDate   = new Date(document.getElementById('date2').value); // ресетимо дату завершення
+
+    endDate   = new Date(date1V.value.toString); // ресетимо дату завершення
     date1.max = date2.value;
     if (date2.value < date1.value) {
-        document.getElementById('result').innerText = 'Дата завершення не може бути раніше за дату початку.';
+        resultV.innerText = 'Дата завершення не може бути раніше за дату початку.';
     }
+   
 }
 
 function addWeek() { // Пресет тиждень
       console.log ('addWeek', startDate, endDate);
     if (!isNaN(startDate)) {
-         endDate = new Date(startDate);
+        endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + 7);
-        document.getElementById('date2').value  = endDate.toISOString().split('T')[0];
+        date2V.value  = endDate.toISOString().split('T')[0];
+      //date2V.value = endDate.toString();
     }
 }
 
 function addMonth() { // Пресет місяць
 
     if (!isNaN(startDate)) {
-         endDate = new Date(startDate);
-        endDate.setMonth(startDate.getMonth() + 1);
-        document.getElementById('date2').value = endDate.toISOString().split('T')[0];
+        endDate = new Date(startDate);
+        endDate.setMonth(startDate.getMonth() + 1); // насправді це + 1 місяць і один день
+        endDate.setDate(endDate.getDate() - 1);
+    
+       
+       date2V.value = endDate.toISOString().split('T')[0];
     }
 }
 
+
 function calculateInterval(unit) { // Головне обчислення інтервалів між датами
-    const oneDay = 86400000. // один десь в мілісекундах
+    const oneDay = 86400000. // один день в мілісекундах
     const intervalType = document.querySelector('.radio-button.active').getAttribute('data-value');
-    console.log (unit, intervalType);
-    //const date1 = new Date(document.getElementById('date1').value);
-    //const date2 = new Date(document.getElementById('date2').value);
-    console.log (date1, date2);
-    console.log (startDate, endDate);    
+   
     if (isNaN(startDate) || isNaN(endDate) || endDate < startDate) {
-        document.getElementById('result').innerText = 'Будьласка, введіть дати з .. по ...';
-  
+        resultV.innerText = 'Будьласка, введіть дати з .. по ...';
         return;
     }
-    
-    let totalDays = (endDate - startDate + oneDay) / oneDay;
+    //console.log (startDate, endDate); 
+    //console.log ('calc interval',endDate - startDate);
+   
+// Через перехід на літній час іде неправильний підрахунок мілісекунд. Відкидаємо час взагалі
+const startDateUTC = new Date(startDate.getUTCFullYear(), startDate.getUTCMonth(), startDate.getUTCDate());
+const endDateUTC   = new Date(endDate.getUTCFullYear(), endDate.getUTCMonth(), endDate.getUTCDate());
+   //const totalDays = (endDate - startDate + oneDay) / oneDay;
+const totalDays = Math.floor((endDateUTC - startDateUTC + oneDay) / oneDay);
     let validDays = totalDays;
 
     if (intervalType === 'будні дні') {
-        validDays = calculateWorkDays(startDate, endDate);
+       // validDays = calculateWorkDays(startDate, endDate);
+       validDays = calculateWorkDays(startDateUTC, endDateUTC);
     } else if (intervalType === 'вихідні дні') {
-        validDays = calculateWeekends(startDate, endDate);
+       // validDays = calculateWeekends(startDate, endDate);
+       validDays = calculateWeekends(startDateUTC, endDateUTC);
     }
 
     let result;
@@ -233,9 +261,9 @@ function calculateInterval(unit) { // Головне обчислення інт
     }
 
     const formattedResult = `${result.toFixed(2)} ${unit}`;
-    document.getElementById('result').innerText = `В обраному інтервалі дат: ${formattedResult}`;
+    resultV.innerText = `В обраному інтервалі дат: ${formattedResult}`;
 
-    saveToHistory(formattedResult, startDate, endDate, intervalType);
+    saveToHistory(formattedResult, startDateUTC, endDateUTC, intervalType);
     displayHistory();
 }
 
@@ -308,14 +336,14 @@ function clearHistory() {
     async function fetchHolidays(countryCode, year) { // ЗАпит до сервера за списком свят
         holidaysList.innerHTML = ''; // чистимо попередній список
         // мабуть ще щось передати в шлях для отримання українською
-        const url = `https://calendarific.com/api/v2/holidays?api_key=${apiToken}&country=${countryCode}&year=${year}`;
+        const url = `https://calendarific.com/api/v2/holidays?api_key=${apiToken}&country=${countryCode}&year=${year}&language=uk`;
         const response = await fetch(url);
         const data = await response.json();
 
         const holidays = data.response.holidays;
 
         if (holidays.length === 0) {
-            holidaysList.innerHTML = '<li>No holidays found for this year.</li>';
+            holidaysList.innerHTML = '<li>Не знайдено свят на цей день.</li>';
             return;
         }
 
