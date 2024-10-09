@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
 let startDate = new Date(document.getElementById('date1').value);  // 
 let endDate   = new Date(document.getElementById('date2').value);
 
-const intervalType = document.querySelector('.radio-button.active').getAttribute('data-value');
+
 
 // друга таба, свята з календаріфік
 const apiToken = 'bRhSp75zNJYqrYlhWThMvINrqnpXHi9q';
@@ -56,6 +56,11 @@ const countrySelect = document.getElementById('country');
 const year = document.getElementById('year');
 const holidaysList = document.getElementById('holidays-list');
 const fetchButton = document.getElementById('fetchHolidays');
+
+const holidayFilter = document.getElementById('holidayFilter');
+const sortAscButton = document.getElementById('sortAsc');
+const sortDescButton = document.getElementById('sortDesc');
+let holidays = []; // Store fetched holidays
 
 // Додаємо решту слухачів подій по табам
    // таба 1
@@ -72,7 +77,7 @@ const fetchButton = document.getElementById('fetchHolidays');
     
     document.getElementById('btn-clear-history').addEventListener('click', clearHistory);
 
-    document.querySelectorAll('.radio-button').forEach(button => {
+    document.querySelectorAll('.radio-button').forEach(button => { //
         button.addEventListener('click', () => {
             document.querySelectorAll('.radio-button').forEach(btn => btn.classList.remove('active'));
             button.classList.add('active');
@@ -91,7 +96,12 @@ const fetchButton = document.getElementById('fetchHolidays');
         }
     });
 
-
+        // Event listeners for sorting
+        sortAscButton.addEventListener('click', () => sortHolidays('asc'));
+        sortDescButton.addEventListener('click', () => sortHolidays('desc'));
+    
+        // Event listener for filtering holidays by name
+        holidayFilter.addEventListener('input', filterHolidays);
 //});
 
 //// Керування ТАБАМИ >>>
@@ -151,22 +161,24 @@ function updateEndDateMin() { // Сетимо вибір другої дати �
     } else {
        date2.disabled = true;
     }
+    validateDates()
    // console.log (date1, date2, date1.value, startDate);
 }
 
 function validateDates() { // Додатково перевіряємо умови дат
-    endDate   = new Date(document.getElementById('date2').value);
+    endDate   = new Date(document.getElementById('date2').value); // ресетимо дату завершення
+    date1.max = date2.value;
     if (date2.value < date1.value) {
         document.getElementById('result').innerText = 'Дата завершення не може бути раніше за дату початку.';
     }
 }
 
 function addWeek() { // Пресет тиждень
-
+      console.log ('addWeek', startDate, endDate);
     if (!isNaN(startDate)) {
          endDate = new Date(startDate);
         endDate.setDate(startDate.getDate() + 7);
-        endDate.value = endDate.toISOString().split('T')[0];
+        document.getElementById('date2').value  = endDate.toISOString().split('T')[0];
     }
 }
 
@@ -180,21 +192,26 @@ function addMonth() { // Пресет місяць
 }
 
 function calculateInterval(unit) { // Головне обчислення інтервалів між датами
-    const date1 = new Date(document.getElementById('date1').value);
-    const date2 = new Date(document.getElementById('date2').value);
+    const oneDay = 86400000. // один десь в мілісекундах
+    const intervalType = document.querySelector('.radio-button.active').getAttribute('data-value');
+    console.log (unit, intervalType);
+    //const date1 = new Date(document.getElementById('date1').value);
+    //const date2 = new Date(document.getElementById('date2').value);
+    console.log (date1, date2);
+    console.log (startDate, endDate);    
     if (isNaN(startDate) || isNaN(endDate) || endDate < startDate) {
         document.getElementById('result').innerText = 'Будьласка, введіть дати з .. по ...';
   
         return;
     }
     
-    let totalDays = (date2 - date1) / (1000 * 60 * 60 * 24);
+    let totalDays = (endDate - startDate + oneDay) / oneDay;
     let validDays = totalDays;
 
     if (intervalType === 'будні дні') {
-        validDays = calculateWorkDays(date1, date2);
+        validDays = calculateWorkDays(startDate, endDate);
     } else if (intervalType === 'вихідні дні') {
-        validDays = calculateWeekends(date1, date2);
+        validDays = calculateWeekends(startDate, endDate);
     }
 
     let result;
@@ -216,9 +233,9 @@ function calculateInterval(unit) { // Головне обчислення інт
     }
 
     const formattedResult = `${result.toFixed(2)} ${unit}`;
-    document.getElementById('result').innerText = `Interval: ${formattedResult}`;
+    document.getElementById('result').innerText = `В обраному інтервалі дат: ${formattedResult}`;
 
-    saveToHistory(formattedResult, date1, date2, intervalType);
+    saveToHistory(formattedResult, startDate, endDate, intervalType);
     displayHistory();
 }
 
