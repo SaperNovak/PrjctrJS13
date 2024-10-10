@@ -88,6 +88,12 @@ input[type="date"] {
     width: 100%; 
 }
 
+/* Disable cursor when input is disabled */
+input:disabled {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
 .radio-button {
     flex: 1;
     padding: 10px;
@@ -194,6 +200,48 @@ li {
 #holidays-list li:last-child {
     border-bottom: none;
 }
+
+/* Styling the table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+table th {
+    background-color: #f4f4f4;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Style for sort buttons */
+.sort-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0;
+    margin-left: 5px;
+}
+
+
+
+
+
+
+
 
 /* For larger screens, use more space for side-by-side layouts */
 @media (min-width: 768px) {

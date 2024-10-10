@@ -110,6 +110,11 @@ let holidays = []; // Store fetched holidays
         sortAscButton.addEventListener('click', () => sortHolidays('asc'));
         sortDescButton.addEventListener('click', () => sortHolidays('desc'));
         holidayFilter.addEventListener('input', filterHolidays);
+
+       // Enable Year input when a country is selected
+    countrySelect.addEventListener('change', () => {
+        yearInput.disabled = countrySelect.value === ''; // Disable if no country is selected
+    });
 //});
 
 //// Керування ТАБАМИ >>>
@@ -335,7 +340,7 @@ function filterHolidays() {
     renderHolidays(filteredHolidays); // Render the filtered holidays
 }
 
-function sortHolidays(order = 'asc') {
+function sortHolidays(order = 'asc') { // сортування за датою
     console.log ('sort', holidays);
     const holidaysToSort = filteredHolidays.length > 0 ? filteredHolidays : holidays; // Sort filtered holidays if any
 
@@ -349,15 +354,29 @@ function sortHolidays(order = 'asc') {
 }
 
 
-// Function to render the holidays list
-function renderHolidays(holidaysToRender) {
+
+function renderHolidays(holidaysToRender) { // рендеримо список свят
     console.log ('hol to render', holidaysToRender);   
-    holidaysList.innerHTML = ''; // Clear previous list
+    holidaysList.innerHTML = ''; // 
     holidaysToRender.forEach(holiday => {
+        /*
         const listItem = document.createElement('li');
         listItem.classList.add('holidayItem');
         listItem.textContent = `${holiday.date.iso}: ${holiday.name}`;
         holidaysList.appendChild(listItem);
+        */
+        const row = document.createElement('tr');
+
+        const dateCell = document.createElement('td');
+        dateCell.textContent = holiday.date.iso;
+
+        const nameCell = document.createElement('td');
+        nameCell.textContent = holiday.name;
+
+        row.appendChild(dateCell);
+        row.appendChild(nameCell);
+
+        holidaysList.appendChild(row);       
         
     });
 }
@@ -405,10 +424,15 @@ async function fetchHolidays(countryCode, year) { // Запит до серве�
         const data = await response.json();
         holidays = data.response.holidays; // кидаємо в глобальний масив
 
-        if (holidays.length === 0) {
+      /*  if (holidays.length === 0) {
             holidaysList.innerHTML = '<li>Не знайдено свят на цей день.</li>';
-            //return []; // Повертаємо порожній масив, якщо свята не знайдено
-        }
+            //return []; // Повертаємо порожній масив, якщо свята не знайдено */
+            if (holidays.length === 0) {
+                holidaysList.innerHTML = '<tr><td colspan="2">No holidays found for this year.</td></tr>';
+                return;
+            }
+            
+       
 //            holidays.forEach(holiday => {
 //                const listItem = document.createElement('li');
 //                listItem.textContent = `${holiday.date.iso}: ${holiday.name}`;

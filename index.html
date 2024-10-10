@@ -84,13 +84,26 @@
             <input type="text" id="holidayFilter" placeholder="Enter holiday name">
         </div>
     
-        <div>
-            <button id="sortAsc">Сортувати за заростанням</button>
-            <button id="sortDesc">Сортувати за спаданням</button>
-        </div>
+        <!-- <div>  -->
+        <!--     <button id="sortAsc">Сортувати за заростанням</button> -->
+        <!--     <button id="sortDesc">Сортувати за спаданням</button> -->
+        <!-- </div> -->
           <div id="results">
-              <h2>Святкові дні:</h2>
-              <ul class="collection" id="holidays-list"></ul>
+             <!--   <h2>Святкові дні:</h2> -->
+             <!--  <ul class="collection" id="holidays-list"></ul> -->
+             <table id="holidays-table">
+              <thead>
+                  <tr>
+                      <th>
+                          Дата
+                          <button id="sortAsc" class="sort-btn">▲</button>
+                          <button id="sortDesc" class="sort-btn">▼</button>
+                      </th>
+                      <th>Назва свята</th>
+                  </tr>
+              </thead>
+              <tbody id="holidays-list"></tbody>
+          </table>   
           </div>
        </div>
       </div>
