@@ -58,15 +58,16 @@ let endDate   = new Date(date2V.value);
                 
 
 // друга таба, свята з календаріфік
-const apiToken = 'bRhSp75zNJYqrYlhWThMvINrqnpXHi9q';
+const apiToken      = 'bRhSp75zNJYqrYlhWThMvINrqnpXHi9q';
 const countrySelect = document.getElementById('country');
-const year = document.getElementById('year');
-const holidaysList = document.getElementById('holidays-list');
-const fetchButton = document.getElementById('fetchHolidays');
+const year          = document.getElementById('year');
+const holidaysList  = document.getElementById('holidays-list');
+const fetchButton   = document.getElementById('fetchHolidays');
 
-const holidayFilter = document.getElementById('holidayFilter');
-const sortAscButton = document.getElementById('sortAsc');
+const holidayFilter  = document.getElementById('holidayFilter');
+const sortAscButton  = document.getElementById('sortAsc');
 const sortDescButton = document.getElementById('sortDesc');
+
 let holidays = []; // Store fetched holidays
 
 // Додаємо решту слухачів подій по табам
@@ -91,23 +92,26 @@ let holidays = []; // Store fetched holidays
         });
     });
 
-    // таба 2
+    // таба 2 >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    
     fetchButton.addEventListener('click', () => {
         const selectedCountry = countrySelect.value;
         const selectedYear = year.value;
 
         if (selectedCountry && selectedYear) {
-            fetchHolidays(selectedCountry, selectedYear);
+            fetchHolidays(selectedCountry, selectedYear).then(holidays => {
+                console.log('Fetched Holidays:', holidays);
+                renderHolidays(holidays);
+            }); 
+          
         } else {
             alert('Спершу оберіть країну та рік.');
         }
     });
 
-        // Event listeners for sorting
+        // Слухачі подій на кнопки сортування
         sortAscButton.addEventListener('click', () => sortHolidays('asc'));
         sortDescButton.addEventListener('click', () => sortHolidays('desc'));
-    
-        // Event listener for filtering holidays by name
         holidayFilter.addEventListener('input', filterHolidays);
 //});
 
@@ -319,39 +323,113 @@ function clearHistory() {
 
 ///// >>>>>Tаба 2 >>>>>
 
-    async function fetchCountries() { // первинний запит для отримання списку країн
-        // мабуть ще щось передати в шлях для отримання українською        
+//let holidays = []; // Store fetched holidays
+let filteredHolidays = []; // Store filtered holidays
+
+function filterHolidays() {
+    console.log ('filter', holidays);
+    const filterText = holidayFilter.value.toLowerCase();
+    const holidaysToFilter = holidaysList.querySelectorAll('.holidayItem'); // Отримуємо всі показані свята
+    console.log ('filter 2', holidaysToFilter);
+    filteredHolidays = holidays.filter(holiday => 
+        holiday.name.toLowerCase().includes(filterText)
+    );
+
+    renderHolidays(filteredHolidays); // Render the filtered holidays
+}
+
+function sortHolidays(order = 'asc') {
+    console.log ('sort', holidays);
+    const holidaysToSort = filteredHolidays.length > 0 ? filteredHolidays : holidays; // Sort filtered holidays if any
+
+    holidaysToSort.sort((a, b) => {
+        const dateA = new Date(a.date.iso);
+        const dateB = new Date(b.date.iso);
+        return order === 'asc' ? dateA - dateB : dateB - dateA;
+    });
+
+    renderHolidays(holidaysToSort); // Render the sorted holidays
+}
+
+
+// Function to render the holidays list
+function renderHolidays(holidaysToRender) {
+    console.log ('hol to render', holidaysToRender);   
+    holidaysList.innerHTML = ''; // Clear previous list
+    holidaysToRender.forEach(holiday => {
+        const listItem = document.createElement('li');
+        listItem.classList.add('holidayItem');
+        listItem.textContent = `${holiday.date.iso}: ${holiday.name}`;
+        holidaysList.appendChild(listItem);
+        
+    });
+}
+
+
+async function fetchCountries() { // первинний запит для отримання списку країн
+    try {
+        // Звернення до API для отримання списку країн
         const response = await fetch(`https://calendarific.com/api/v2/countries?api_key=${apiToken}`);
+
+        // Перевірка на помилку відповіді сервера
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
         const data = await response.json();
         const countries = data.response.countries;
 
         countries.forEach(country => {
             const option = document.createElement('option');
-            option.value = country['iso-3166']; // нагуглила приклад, погратись з форматом
+            option.value = country['iso-3166']; // 
             option.textContent = country.country_name;
             countrySelect.appendChild(option);
         });
-    }
-    
-    async function fetchHolidays(countryCode, year) { // ЗАпит до сервера за списком свят
-        holidaysList.innerHTML = ''; // чистимо попередній список
-        // мабуть ще щось передати в шлях для отримання українською
-        const url = `https://calendarific.com/api/v2/holidays?api_key=${apiToken}&country=${countryCode}&year=${year}&language=uk`;
-        const response = await fetch(url);
-        const data = await response.json();
 
+    } catch (error) {
+        console.error("Помилка отримання даних з сайту:", error); // Логування помилки
+        alert('Не вдалося отримати список країн. Спробуйте пізніше.'); // Повідомлення користувачу
+    }
+}
+
+async function fetchHolidays(countryCode, year) { // Запит до сервера за списком свят
+    holidaysList.innerHTML = ''; // Очищення попереднього списку
+    const url = `https://calendarific.com/api/v2/holidays?api_key=${apiToken}&country=${countryCode}&year=${year}&language=uk`;
+
+    try {
+        // Звернення до API для отримання списку свят
+        const response = await fetch(url);
+
+        // Перевірка на помилку відповіді сервера
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
         const holidays = data.response.holidays;
 
         if (holidays.length === 0) {
             holidaysList.innerHTML = '<li>Не знайдено свят на цей день.</li>';
-            return;
+            return []; // Повертаємо порожній масив, якщо свята не знайдено
         }
+//            holidays.forEach(holiday => {
+//                const listItem = document.createElement('li');
+//                listItem.textContent = `${holiday.date.iso}: ${holiday.name}`;
+//                holidaysList.appendChild(listItem);
+//            });
+        return holidays; // Повертаємо масив свят
 
-        holidays.forEach(holiday => {
-            const listItem = document.createElement('li');
-            listItem.textContent = `${holiday.date.iso}: ${holiday.name}`;
-            holidaysList.appendChild(listItem);
-        });
+    } catch (error) {
+        console.error("Error fetching holidays:", error); // Логування помилки
+        alert('Не вдалося отримати список свят. Спробуйте пізніше.'); // Повідомлення користувачу
+        return []; // Повертаємо порожній масив у випадку помилки
     }
+}
+
+
+    
+    
+    
+    
 
 ///// <<<<<Tаба 2 <<<<<
