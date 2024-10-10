@@ -1,89 +1,80 @@
 "use strict";
 
-/*
-Напишіть код який виводить в консоль значення від 1 до 100, 
-але замість чисел кратних 3 має виводитись `Лол`, замість значень кратних 5 - `Кек`, 
-а замість значень кратних і 3, і 5 - `ЛолКек
-*/
-//const RandVal = Math.trunc(Math.random() * 100);
-//console.log(RandVal); 
+//1. Задача на повернення ініціалів для кожного імені з масиву, посортованих в алфавітному порядку: 
 
+const userNames = ["Петрик Ольга Іванівна", "Гнатюк Петро Антонович", "Рудко Андрій Опанасович"];
 
-const Value = prompt("Enter number from 1 to 100");
+let initials =getInitials(userNames);
 
-function isMult(a, b) {
-    return a % b === 0;
+function getInitials(fullNames) {
+  return fullNames.map(name => {
+    const words = name.split(' ');
+    return words.map(word => word[0]).join('.') + '.';
+  }).sort(); // за замовчанням по алфавіту
+};
+
+console.log(initials); // [ "Г.П.А.", "П.О.І.", "Р.А.О."]
+
+// 2. Задача на фільтрування масиву
+//Реалізуйте фільтрування імен які починаються з голосної двома способами:
+//через умовну конструкцію
+//через вбудований метод масивів
+
+const userNames2 = ['Петро', 'Емма', 'Юстин', 'Ілля', 'Марта', 'Яна', 'Василь', 'Антон', 'Олена'];
+let filteredNames;
+
+// тут ваш код...
+function filterNamesWithIf(names) {
+  const letters = ['А', 'Е', 'Є', 'И', 'І', 'Ї', 'О', 'У', 'Ю', 'Я'];
+  let filteredNames = [];
+
+  for (let i = 0; i < names.length; i++) {
+    if (letters.includes(names[i][0].toUpperCase())) {
+      filteredNames.push(names[i]);
+    }
   }
 
+  return filteredNames;
+}
 
-if (Boolean(+Value)) {
+function filterNamesWithFilter(names) {
+  const letters = ['А', 'Е', 'Є', 'И', 'І', 'Ї', 'О', 'У', 'Ю', 'Я'];
 
-// while
-let a = 0;
- while (a <= +Value) {
+  return names.filter(name => letters.includes(name[0].toUpperCase()));
+}
+
+//console.log(filteredNames); // ['Емма', 'Юстин', 'Ілля', 'Яна', 'Антон', 'Олена']
+console.log (filterNamesWithIf(userNames2));
+console.log (filterNamesWithFilter(userNames2));
+
+//3. Задача на розворот числа:
+const currentMaxValue = 4589;
+let reverseMaxValue;
+
+reverseMaxValue = Number(currentMaxValue.toString().split('').reverse().join('')); // стрінг>масив>розворот>стрінг>число
+
+console.log(reverseMaxValue); // 9854
+console.log(typeof reverseMaxValue); // 'number'
+
+
+//4. Задача на знаходження добутку масиву чисел з невідомою глибиною вкладеності:
+const resultsArray = [1, 2, [3, [4]]];
+let productOfArray;
+
+// тут ваш код...
+
+
+function calculate(arr) {
+  return arr.reduce((acc, item) => {
     
-    switch (true) {
-     //   case !!!(a % 15):
-          case isMult(a, 15):
-            console.log("ЛолКек");
-        break;
-      //  case !!!(a % 3):
-      case isMult(a, 3):
-            console.log("Лол");
-        break;
-      //  case !!!(a % 5):
-      case isMult(a, 5):
-            console.log("Кек");
-        break;
-        default:
-            console.log(a); 
-    };
-   a++;
- }
-
-}  // (Boolean(+Value)) 
-else { //(Boolean(+Value)) 
-       console.log("Щось пішло не так");
-     } // else (Boolean(+Value)) 
-
-
-
-
-/*
-Напишіть код який бере значення зі змінної (`value`) і виводить у консоль всі парні числа, що менші за задане.
-Наприклад, якщо у змінній число 10, програма має вивести наступне: 2, 4, 6, 8. 
-Додаткові вимоги:
-1. Реалізуйте рішення 2 способами: з використанням циклу `for` та `while`
-2. Код має перевіряти, чи значення у змінній є числом. Якщо воно не є числом,  
-в консоль має вивестись повідомлення про помилку, наприклад `'Таке чуство шо Бог десь наказує нас за шось'`.
-*/
-console.log("--------------- 2 ------------------");
-//const Value = prompt("Enter number");
-const isEven = n => !!!(n % 2); // Перевірка парності
-
-
-if (Boolean(+Value)) {
-// For
-     for (let i = 1; i <= +Value; i++) {
-          if (isEven(i) )  {
-              console.log(i);
-          }
-         // else {
-         // continue;  
-         // }
-     } //for
-// while
-let k = 1;
- while (k <= +Value) {
-    
-    if (isEven(k) )  {
-        console.log(k);
+    if (Array.isArray(item)) { // якщо масив розпакуваємо ще
+      return acc * calculate(item);
     }
-   k++;
- }
+    return acc * item;        // число-множимо
+  }, 1);                    
+}
 
-}  // (Boolean(+Value)) 
-else { //(Boolean(+Value)) 
-       console.log("Яка прикра несподіванка спіткала наших на самому старті :(");
-     } // else (Boolean(+Value)) 
+productOfArray = calculate(resultsArray);
+
+console.log(productOfArray); // 24
 
