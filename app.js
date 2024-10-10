@@ -99,10 +99,7 @@ let holidays = []; // Store fetched holidays
         const selectedYear = year.value;
 
         if (selectedCountry && selectedYear) {
-            fetchHolidays(selectedCountry, selectedYear).then(holidays => {
-                console.log('Fetched Holidays:', holidays);
-                renderHolidays(holidays);
-            }); 
+            fetchHolidays(selectedCountry, selectedYear);
           
         } else {
             alert('Спершу оберіть країну та рік.');
@@ -406,18 +403,19 @@ async function fetchHolidays(countryCode, year) { // Запит до серве�
         }
 
         const data = await response.json();
-        const holidays = data.response.holidays;
+        holidays = data.response.holidays; // кидаємо в глобальний масив
 
         if (holidays.length === 0) {
             holidaysList.innerHTML = '<li>Не знайдено свят на цей день.</li>';
-            return []; // Повертаємо порожній масив, якщо свята не знайдено
+            //return []; // Повертаємо порожній масив, якщо свята не знайдено
         }
 //            holidays.forEach(holiday => {
 //                const listItem = document.createElement('li');
 //                listItem.textContent = `${holiday.date.iso}: ${holiday.name}`;
 //                holidaysList.appendChild(listItem);
 //            });
-        return holidays; // Повертаємо масив свят
+       // return holidays; // Повертаємо масив свят
+       renderHolidays(holidays);
 
     } catch (error) {
         console.error("Error fetching holidays:", error); // Логування помилки
